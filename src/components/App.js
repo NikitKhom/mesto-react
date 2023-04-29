@@ -11,13 +11,13 @@ function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-    const [selectedCard, setSelectedCard] = React.useState(false);
+    const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
 
     function closeAllPopups() {
         setIsEditAvatarPopupOpen(false);
         setIsEditProfilePopupOpen(false);
         setIsAddPlacePopupOpen(false);
-        setSelectedCard(false);
+        setSelectedCard({name: '', link: ''});
     }
 
     function handleEditAvatarClick() {
@@ -42,43 +42,34 @@ function App() {
             <Header />
             <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleСardClick}/>
             <Footer />
-            <PopupWithForm 
+            <PopupWithForm
                 name='profile' 
                 title='Редактировать профиль' 
                 isOpen={isEditProfilePopupOpen} 
-                onClose={closeAllPopups} 
-                children={
-                <>
-                    <input className="popup__text-field popup__text-field_type_name" id="name" type="text" defaultValue="" name="name" required placeholder="Имя" minLength="2" maxLength="40"></input>
-                    <span className="popup__input-error name-error">.</span>
-                    <input className="popup__text-field popup__text-field_type_job" id="job" type="text" defaultValue="" name="job" required placeholder="Работа" minLength="2" maxLength="200"></input>
-                    <span className="popup__input-error job-error">.</span>
-                </>
-                }/>
+                onClose={closeAllPopups}>
+                <input className="popup__text-field popup__text-field_type_name" id="name" type="text" defaultValue="" name="name" required placeholder="Имя" minLength="2" maxLength="40"></input>
+                <span className="popup__input-error name-error">.</span>
+                <input className="popup__text-field popup__text-field_type_job" id="job" type="text" defaultValue="" name="job" required placeholder="Работа" minLength="2" maxLength="200"></input>
+                <span className="popup__input-error job-error">.</span>
+            </PopupWithForm>
             <PopupWithForm 
                 name='addPlace'
                 title='Новое место'
                 isOpen={isAddPlacePopupOpen}
-                onClose={closeAllPopups} 
-                children={
-                    <>
-                        <input className="popup__text-field popup__text-field_type_title" id="title" type="text" defaultValue="" name="name" required placeholder="Название" minLength="2" maxLength="30"></input>
-                        <span className="popup__input-error title-error">.</span>
-                        <input className="popup__text-field popup__text-field_type_link" id="link" type="url" defaultValue="" name="link" required placeholder="Ссылка на картинку"></input>
-                        <span className="popup__input-error link-error">.</span>
-                    </>
-                }/>
+                onClose={closeAllPopups}>
+                <input className="popup__text-field popup__text-field_type_title" id="title" type="text" defaultValue="" name="name" required placeholder="Название" minLength="2" maxLength="30"></input>
+                <span className="popup__input-error title-error">.</span>
+                <input className="popup__text-field popup__text-field_type_link" id="link" type="url" defaultValue="" name="link" required placeholder="Ссылка на картинку"></input>
+                <span className="popup__input-error link-error">.</span>
+            </PopupWithForm>
             <PopupWithForm 
                 name='avatar'
                 title='Обновить аватар'
                 isOpen={isEditAvatarPopupOpen}
-                onClose={closeAllPopups} 
-                children={
-                    <>
+                onClose={closeAllPopups}>
                         <input className="popup__text-field popup__text-field_type_avatar" id="avatar" type="url" defaultValue="" name="avatar" required placeholder="Ссылка на картинку"></input>
                         <span className="popup__input-error avatar-error">.</span>
-                    </>
-                }/>
+            </PopupWithForm>
             <ImagePopup  card={selectedCard} onClose={closeAllPopups}/>
     
 

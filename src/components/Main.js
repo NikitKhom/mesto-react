@@ -6,22 +6,21 @@ import Card from './Card';
 
 function Main(props) {
 
-    const [userName, setUserName] = React.useState();
-    const [userDescription, setUserDescription] = React.useState();
-    const [userAvatar, setUserAvatar] = React.useState();
+    const [userName, setUserName] = React.useState("");
+    const [userDescription, setUserDescription] = React.useState("");
+    const [userAvatar, setUserAvatar] = React.useState("");
     const [cards, setCards] = React.useState([]);
     
     React.useEffect(() => {
         const apiInfo = api.getUserInfo();
         const apiCards = api.getCards();
         Promise.all([apiInfo, apiCards])
-	    .then(values => {
-            const info = values[0];
-            setUserName(info.name);
-            setUserDescription(info.about);
-            setUserAvatar(info.avatar);
-            const usersCards = values[1].map((card) => {
-                return {title: card.name, link: card.link, likes: card.likes.length}
+	    .then(([userData, cards]) => {
+            setUserName(userData.name);
+            setUserDescription(userData.about);
+            setUserAvatar(userData.avatar);
+            const usersCards = cards.map((card) => {
+                return {title: card.name, link: card.link, likes: card.likes.length, id: card._id}
             })
             setCards(usersCards);
 	    })
@@ -44,7 +43,7 @@ function Main(props) {
               <button className="profile__add-button button" type="button" onClick={props.onAddPlace}></button>
           </section>
           <section className="cards">
-            {cards.map((card, id) => <Card key={id} card={card} onCardClick={props.onCardClick}/>)}
+            {cards.map(card => <Card key={card.id} card={card} onCardClick={props.onCardClick}/>)}
           </section>
       </main>
     )

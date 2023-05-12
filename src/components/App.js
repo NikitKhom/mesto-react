@@ -1,17 +1,69 @@
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import {CurrentUserContext} from '../context/CurrentUserContext';
+import api from '../utils/api';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import React from 'react';
-
-
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 
 function App() {
+    const [currentUser, setCurrentUser] = React.useState({name: '', about: '', avatar: '', _id: ''});
+    const [cards, setCards] = React.useState([]);
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
     const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
+
+    React.useEffect(() => {
+        Promise.all([api.getUserInfo(), api.getCards()])
+        .then(([userInfo, userCards]) => {
+            setCurrentUser(userInfo); 
+            setCards(userCards);
+        })
+        .catch(err => console.log(err));
+    }, [])
+
+    function handleCardLike(card) {
+        const isLiked = card.likes.some(i => i._id === currentUser._id);
+        api.changeLikeCardStatus(card._id, isLiked)
+        .then((newCard) => {
+            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        })
+        .catch(err => console.log(err));
+    } 
+
+    function handleCardDelete(card) {
+        api.deleteCard(card._id)
+        .then(res => {
+            setCards((state) => state.filter((c) => c._id !== card._id));
+        })
+        .catch(err => console.log(err));
+    }
+
+    function handleAddPlaceSubmit(card) {
+        api.addCard(card)
+        .then(newCard => {
+            setCards([newCard, ...cards]);
+        })
+        .catch(err => console.log(err));
+    }
+
+    function handleUpdateUser(info) {
+        api.changeUserInfo({userName: info.name, userInfo: info.about})
+        .then(info => setCurrentUser(info))
+        .catch(err => console.log(err));
+        closeAllPopups();
+    }
+
+    function handleUpdateAvatar(avatar) {
+        api.setUserAvatar(avatar)
+        .then(info => setCurrentUser(info))
+        .catch(err => console.log(err));
+        closeAllPopups();
+    }
 
     function closeAllPopups() {
         setIsEditAvatarPopupOpen(false);
@@ -38,51 +90,38 @@ function App() {
 
     return (
     
-        <>
+        <CurrentUserContext.Provider value={currentUser}>
             <Header />
-            <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleСardClick}/>
+            <Main 
+            onEditProfile={handleEditProfileClick} 
+            onAddPlace={handleAddPlaceClick} 
+            onEditAvatar={handleEditAvatarClick} 
+            onCardClick={handleСardClick} 
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            cards={cards}
+            setCards={setCards}
+            />
             <Footer />
-            <PopupWithForm
-                name='profile' 
-                title='Редактировать профиль' 
-                isOpen={isEditProfilePopupOpen} 
-                onClose={closeAllPopups}>
-                <input className="popup__text-field popup__text-field_type_name" id="name" type="text" defaultValue="" name="name" required placeholder="Имя" minLength="2" maxLength="40"></input>
-                <span className="popup__input-error name-error">.</span>
-                <input className="popup__text-field popup__text-field_type_job" id="job" type="text" defaultValue="" name="job" required placeholder="Работа" minLength="2" maxLength="200"></input>
-                <span className="popup__input-error job-error">.</span>
-            </PopupWithForm>
-            <PopupWithForm 
-                name='addPlace'
-                title='Новое место'
+
+            <EditProfilePopup 
+            isOpen={isEditProfilePopupOpen} 
+            onClose={closeAllPopups} 
+            onUpdateUser={handleUpdateUser}/>
+
+            <AddPlacePopup
                 isOpen={isAddPlacePopupOpen}
-                onClose={closeAllPopups}>
-                <input className="popup__text-field popup__text-field_type_title" id="title" type="text" defaultValue="" name="name" required placeholder="Название" minLength="2" maxLength="30"></input>
-                <span className="popup__input-error title-error">.</span>
-                <input className="popup__text-field popup__text-field_type_link" id="link" type="url" defaultValue="" name="link" required placeholder="Ссылка на картинку"></input>
-                <span className="popup__input-error link-error">.</span>
-            </PopupWithForm>
-            <PopupWithForm 
-                name='avatar'
-                title='Обновить аватар'
-                isOpen={isEditAvatarPopupOpen}
-                onClose={closeAllPopups}>
-                        <input className="popup__text-field popup__text-field_type_avatar" id="avatar" type="url" defaultValue="" name="avatar" required placeholder="Ссылка на картинку"></input>
-                        <span className="popup__input-error avatar-error">.</span>
-            </PopupWithForm>
+                onClose={closeAllPopups}
+                onAddPlace={handleAddPlaceSubmit}/>
+
+            <EditAvatarPopup 
+            isOpen={isEditAvatarPopupOpen} 
+            onClose={closeAllPopups} 
+            onUpdateAvatar={handleUpdateAvatar}/>
+
             <ImagePopup  card={selectedCard} onClose={closeAllPopups}/>
-    
-
-        {/* <div className="popup popup_type_confirm">
-            <div className="popup__content">
-                <h2 className="popup__title  popup__title_type_confirm">Вы уверены?</h2>
-                    <button className="popup__save-button button popup__save-button_type_confirm" type="button">Да</button>
-                    <button className="popup__close-button button" type="button"></button>
-            </div>
-        </div> */}
-
-    </>
+    </CurrentUserContext.Provider>
     );
-    }
+}
 
 export default App;

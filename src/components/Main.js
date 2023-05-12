@@ -1,32 +1,20 @@
 import loadingIcon from '../images/loading_icon.svg';
 import React from 'react';
-import api from '../utils/api';
 import Card from './Card';
-
+import { CurrentUserContext } from '../context/CurrentUserContext';
 
 function Main(props) {
+    
+    const [userName, setUserName] = React.useState('');
+    const [userDescription, setUserDescription] = React.useState('');
+    const [userAvatar, setUserAvatar] = React.useState('');
+    const currentUser = React.useContext(CurrentUserContext);
 
-    const [userName, setUserName] = React.useState("");
-    const [userDescription, setUserDescription] = React.useState("");
-    const [userAvatar, setUserAvatar] = React.useState("");
-    const [cards, setCards] = React.useState([]);
-    
     React.useEffect(() => {
-        const apiInfo = api.getUserInfo();
-        const apiCards = api.getCards();
-        Promise.all([apiInfo, apiCards])
-	    .then(([userData, cards]) => {
-            setUserName(userData.name);
-            setUserDescription(userData.about);
-            setUserAvatar(userData.avatar);
-            const usersCards = cards.map((card) => {
-                return {title: card.name, link: card.link, likes: card.likes.length, id: card._id}
-            })
-            setCards(usersCards);
-	    })
-	    .catch(err => console.log(err));
-    }, [])
-    
+        setUserAvatar(currentUser.avatar);
+        setUserDescription(currentUser.about);
+        setUserName(currentUser.name);
+    }, [currentUser])
 
     return (
         <main>
@@ -43,7 +31,7 @@ function Main(props) {
               <button className="profile__add-button button" type="button" onClick={props.onAddPlace}></button>
           </section>
           <section className="cards">
-            {cards.map(card => <Card key={card.id} card={card} onCardClick={props.onCardClick}/>)}
+            {props.cards.map(card => <Card key={card._id} card={card} onCardClick={props.onCardClick} onCardLike={props.onCardLike} onCardDelete={props.onCardDelete}/>)}
           </section>
       </main>
     )

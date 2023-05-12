@@ -55,25 +55,26 @@ class API {
         )
     }
 
-    putLike(cardId){
-        return this._checkServerStatus(
-            fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-                method: 'PUT',
-                headers: this._headers
-            })
-        )
+    changeLikeCardStatus(cardId, isLiked){
+        if (!isLiked) {
+            return this._checkServerStatus(
+                fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
+                    method: 'PUT',
+                    headers: this._headers
+                })
+            )
+        }
+        else {
+            return this._checkServerStatus(
+                fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
+                    method: 'DELETE',
+                    headers: this._headers
+                })
+            )
+        }
     }
 
-    deleteLike(cardId){
-        return this._checkServerStatus(
-            fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
-                method: 'DELETE',
-                headers: this._headers
-            })
-        )
-    }
-
-    changeUserAvatar(userAvatar) {
+    setUserAvatar(userAvatar) {
         return this._checkServerStatus(
             fetch(`${this._baseUrl}/users/me/avatar`, {
                 method: 'PATCH',

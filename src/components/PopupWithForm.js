@@ -10,7 +10,7 @@ function PopupWithForm({isOpen, onClose, name, title, buttonText, children, onSu
                         <button className={`popup__save-button button popup__save-button_type_${name}`} type="submit">Сохранить</button>
                     </fieldset>
                 </form>
-                <button className="popup__close-button button" type="button" onClick={onClose} value={buttonText}/> 
+                <button className="popup__close-button button" type="button" onClick={onClose}/> 
             </div>
         </div>
     )

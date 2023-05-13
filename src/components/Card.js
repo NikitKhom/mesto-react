@@ -21,7 +21,6 @@ function Card(props) {
     }
 
     return(
-        <CurrentUserContext.Provider vlaue={currentUser}>
             <div className="cards__card">
                 {isOwn && <button className="cards__delete-button button" type="button" onClick={handleCardDelete} />} 
                 <img className="cards__image" src={props.card.link} alt={props.card.name} onClick={handleClick}></img>
@@ -33,8 +32,6 @@ function Card(props) {
                     </div>
                 </div>
             </div>
-        </CurrentUserContext.Provider>
-
     )
 }
 

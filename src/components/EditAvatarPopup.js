@@ -21,7 +21,8 @@ function EditAvatarPopup(props) {
             name='avatar'
             title='Обновить аватар'
             isOpen={props.isOpen}
-            onClose={props.onClose}>
+            onClose={props.onClose}
+            buttonText='Сохранить'>
                     <input ref={avatarRef} className="popup__text-field popup__text-field_type_avatar" id="avatar" type="url" defaultValue="" name="avatar" required placeholder="Ссылка на картинку"/>
                     <span className="popup__input-error avatar-error"></span>
         </PopupWithForm>

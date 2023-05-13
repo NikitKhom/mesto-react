@@ -47,22 +47,28 @@ function App() {
         api.addCard(card)
         .then(newCard => {
             setCards([newCard, ...cards]);
+            closeAllPopups();
         })
         .catch(err => console.log(err));
     }
 
     function handleUpdateUser(info) {
         api.changeUserInfo({userName: info.name, userInfo: info.about})
-        .then(info => setCurrentUser(info))
+        .then(info => {
+            setCurrentUser(info);
+            closeAllPopups();
+        })
         .catch(err => console.log(err));
-        closeAllPopups();
+        
     }
 
     function handleUpdateAvatar(avatar) {
         api.setUserAvatar(avatar)
-        .then(info => setCurrentUser(info))
+        .then(info => {
+            setCurrentUser(info);
+            closeAllPopups();
+        })
         .catch(err => console.log(err));
-        closeAllPopups();
     }
 
     function closeAllPopups() {

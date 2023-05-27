@@ -1,17 +1,13 @@
 import {useState} from "react";
-import {Link, useNavigate} from 'react-router-dom';
-import * as auth from '../utils/auth';
+import {Link} from 'react-router-dom';
+
 
 function Register(props) {
     const [formValue, setFormValue] = useState({
         email: '',
         password: ''
     });
-    const navigate = useNavigate();
 
-    function openInfoTooltip(isOk) {
-        props.onRegister(isOk);
-    }
 
     function handleChange(e) {
         const {name, value} = e.target;
@@ -26,24 +22,18 @@ function Register(props) {
         if (!formValue.password || !formValue.email) {
             return;
         }
-        auth.register(formValue.password, formValue.email)
-        .then((res) => {
-            if (res.data) {
-                openInfoTooltip(true);
-                navigate('/sign-in', {replace: true});
-            }
-            else {
-                openInfoTooltip(false);
-            }
-        });
+        props.handleRegister({
+            email: formValue.email,
+            password: formValue.password
+        })
     }
 
     return (
         <div className="register">
             <p className="register__welcome">Регистрация</p>
             <form className="register__form" onSubmit={handleSubmit}>
-                <input className="register__input" id="email" name="email" type="email" placeholder="Email" onChange={handleChange}/>
-                <input className="register__input" id="password" name="password" type="password" placeholder="Password" onChange={handleChange}/>
+                <input className="register__input" id="email" name="email" type="email" placeholder="Email" onChange={handleChange} value={formValue.email}/>
+                <input className="register__input" id="password" name="password" type="password" placeholder="Password" onChange={handleChange} value={formValue.password}/>
                 <button className="register__button button" type="submit">Зарегистрироваться</button>
             </form>
             

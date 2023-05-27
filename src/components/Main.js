@@ -16,7 +16,6 @@ function Main(props) {
         setUserDescription(currentUser.about);
         setUserName(currentUser.name);
     }, [currentUser])
-
     return (
         <>
             <main>

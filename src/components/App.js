@@ -50,14 +50,36 @@ function App() {
                         navigate("/", {replace: true})
                     }
                 }
-          });
+            })
+            .catch(err => console.log(err));
         }
-      }
+    }
 
-    function handleLogin(email) {
-        setLoggedIn(true);
-        setUserEmail(email);
-      }
+    function handleLogin({password, email}) {
+        auth.authorize(password, email)
+		.then((data) => {
+			if (data.token){
+                setLoggedIn(true);
+                setUserEmail(email);
+				navigate('/', {replace: true});
+			}
+		})
+		.catch(err => console.log(err));
+    }
+
+    function handleRegister({email, password}) {
+        auth.register(password, email)
+        .then((res) => {
+            if (res.data) {
+                openInfoTooltip(true);
+                navigate('/sign-in', {replace: true});
+            } 
+        })
+        .catch(err => {
+            console.log(err);
+            openInfoTooltip(false);
+        })
+    }
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -92,7 +114,6 @@ function App() {
             closeAllPopups();
         })
         .catch(err => console.log(err));
-        
     }
 
     function handleUpdateAvatar(avatar) {
@@ -125,7 +146,7 @@ function App() {
     }
 
     function handleСardClick(card) {
-        setSelectedCard({title: card.title, link: card.link});
+        setSelectedCard({name: card.name, link: card.link});
     }
 
     function openInfoTooltip(isRegistered) {
@@ -152,7 +173,7 @@ function App() {
                     onCardDelete={handleCardDelete}
                     cards={cards}
                     setCards={setCards}/>} />
-                <Route path="/sign-up" element={<Register onRegister={openInfoTooltip}/>}/>
+                <Route path="/sign-up" element={<Register handleRegister={handleRegister}/>}/>
                 <Route path="/sign-in" element={<Login handleLogin={handleLogin}/>}/>
                 <Route path="*" element={<Navigate to="/sign-in" />} />
             </Routes>
@@ -168,9 +189,9 @@ function App() {
             onUpdateUser={handleUpdateUser}/>
 
             <AddPlacePopup
-                isOpen={isAddPlacePopupOpen}
-                onClose={closeAllPopups}
-                onAddPlace={handleAddPlaceSubmit}/>
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlaceSubmit}/>
 
             <EditAvatarPopup 
             isOpen={isEditAvatarPopupOpen} 

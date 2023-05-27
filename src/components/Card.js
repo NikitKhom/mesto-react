@@ -10,7 +10,7 @@ function Card(props) {
 
     function handleClick() {
         props.onCardClick(props.card);
-      }  
+    }  
 
     function handleCardLike() {
         props.onCardLike(props.card);
